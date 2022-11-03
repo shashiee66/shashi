@@ -1,0 +1,62 @@
+obj/linux/lintls.o: LinIoTarg/lintls.c ../../tmwscl/utils/tmwcnfg.h \
+ ../../tmwscl/utils/tmwdefs.h LinIoTarg/tmwtargcnfg.h LinIoTarg/lintcp.h \
+ ../../tmwscl/utils/tmwtypes.h ../../tmwscl/utils/tmwtarg.h \
+ ../../tmwscl/utils/tmwdiag.h ../../tmwscl/utils/tmwmem.h \
+ ../../tmwscl/utils/tmwdlist.h ../../tmwscl/utils/tmwchnl.h \
+ ../../tmwscl/utils/tmwphys.h ../../tmwscl/utils/tmwtimer.h \
+ ../../tmwscl/utils/tmwappl.h LinIoTarg/tmwtargos.h \
+ ../../tmwscl/utils/tmwlink.h ../../tmwscl/utils/tmwscl.h \
+ ../../tmwscl/utils/tmwsesn.h ../../tmwscl/utils/tmwtprt.h \
+ ../../tmwscl/utils/tmwdtime.h ../../tmwscl/utils/tmwsctr.h \
+ ../../tmwscl/utils/tmwtargp.h LinIoTarg/tmwtargcnfg.h LinIoTarg/lintls.h \
+ LinIoTarg/tmwtargio.h LinIoTarg/liniodiag.h
+
+../../tmwscl/utils/tmwcnfg.h:
+
+../../tmwscl/utils/tmwdefs.h:
+
+LinIoTarg/tmwtargcnfg.h:
+
+LinIoTarg/lintcp.h:
+
+../../tmwscl/utils/tmwtypes.h:
+
+../../tmwscl/utils/tmwtarg.h:
+
+../../tmwscl/utils/tmwdiag.h:
+
+../../tmwscl/utils/tmwmem.h:
+
+../../tmwscl/utils/tmwdlist.h:
+
+../../tmwscl/utils/tmwchnl.h:
+
+../../tmwscl/utils/tmwphys.h:
+
+../../tmwscl/utils/tmwtimer.h:
+
+../../tmwscl/utils/tmwappl.h:
+
+LinIoTarg/tmwtargos.h:
+
+../../tmwscl/utils/tmwlink.h:
+
+../../tmwscl/utils/tmwscl.h:
+
+../../tmwscl/utils/tmwsesn.h:
+
+../../tmwscl/utils/tmwtprt.h:
+
+../../tmwscl/utils/tmwdtime.h:
+
+../../tmwscl/utils/tmwsctr.h:
+
+../../tmwscl/utils/tmwtargp.h:
+
+LinIoTarg/tmwtargcnfg.h:
+
+LinIoTarg/lintls.h:
+
+LinIoTarg/tmwtargio.h:
+
+LinIoTarg/liniodiag.h:

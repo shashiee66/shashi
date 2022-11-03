@@ -1,0 +1,67 @@
+[ ca ]
+default_ca	= root_ca
+
+[ root_ca ]
+dir              = ./certs
+certificate      = $dir/cacert.pem
+database         = $dir/index.txt
+new_certs_dir    = $dir/certs
+private_key      = $dir/private/cakey.pem
+serial           = $dir/serial
+ 
+default_crl_days = 9999
+default_days     = TMWDAYS
+default_md       = sha1
+ 
+policy           = root_ca_policy
+x509_extensions  = certificate_extensions
+ 
+[ root_ca_policy ]
+commonName             	= supplied
+stateOrProvinceName    	= supplied
+countryName            	= supplied
+emailAddress           	= optional
+organizationName     		= supplied
+organizationalUnitName 	= optional
+ 
+[ req ]
+default_bits						= 2048
+default_keyfile  				= privkey.pem
+default_md          		= sha1
+
+prompt              		= no
+distinguished_name			= req_distinguished_name
+x509_extensions	 				= req_extensions
+
+# the following sections are specific to the request we're building
+
+[ certificate_extensions ]
+basicConstraints = CA:true
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer:always
+1.2.840.10070.8.1=ASN1:SEQUENCE:UserRoleInfo
+ 		[UserRoleInfo]
+ 		blob = SEQUENCE:blob1
+ 		
+ 		[blob1]
+ 		userRole = SEQUENCE:RoleId
+ 		aor = UTF8String:testaor
+ 		revision = INTEGER:1
+ 		roleDefinition = UTF8String:IEC62351-8
+		operation = ENUMERATED:TMWOPERATION
+ 		statusChangeSequenceNumber = INTEGER:TMWSCS
+ 		
+ 		[RoleId]
+		RoleId = INTEGER:32768
+
+
+
+[ req_distinguished_name ]
+countryName         = US
+stateOrProvinceName = North Carolina
+localityName        = Raleigh
+organizationName    = Triangle MicroWorks, Inc.
+commonName          = Root CA
+
+[ req_extensions ]
+basicConstraints = CA:true
