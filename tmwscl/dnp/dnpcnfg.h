@@ -198,7 +198,7 @@
  * authentication is not being supported
  */
 #ifndef DNPCNFG_SUPPORT_AUTHENTICATION
-#define DNPCNFG_SUPPORT_AUTHENTICATION   TMWDEFS_TRUE
+#define DNPCNFG_SUPPORT_AUTHENTICATION   TMWDEFS_FALSE
 #endif
 
 /* Specify maximum number of secure authentication user numbers supported 
@@ -235,7 +235,7 @@
  * TMWCNFG_SUPPORT_CRYPTO must be TMWDEFS_TRUE
 */
 #ifndef DNPCNFG_SUPPORT_SA_VERSION5
-#define DNPCNFG_SUPPORT_SA_VERSION5      TMWDEFS_TRUE
+#define DNPCNFG_SUPPORT_SA_VERSION5      TMWDEFS_FALSE
 #endif
 
 /* Secure Authentication Version 5 configuration */

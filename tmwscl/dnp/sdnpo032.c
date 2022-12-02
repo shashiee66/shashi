@@ -30,7 +30,8 @@
 #include "tmwscl/dnp/dnpdiag.h"
 #include "tmwscl/dnp/sdnpdiag.h"
 #include "tmwscl/utils/tmwtarg.h"
-
+#include <mqtt.h>
+#include "templates/posix_sockets.h"
 #include "tmwscl/dnp/dnpdefs.h"
 #include "tmwscl/dnp/dnpdtime.h"
 #include "tmwscl/dnp/sdnpdata.h"
@@ -38,19 +39,19 @@
 #include "tmwscl/dnp/sdnpmem.h"
 #include "tmwscl/dnp/sdnpunsl.h"
 #include "tmwscl/dnp/sdnpo032.h"
+// #include "twmscl/utils/twmtypes.h"
 
 #if SDNPDATA_SUPPORT_OBJ32
-
 /* function: _setVariationInfo() */
 static void TMWDEFS_LOCAL _setVariationInfo(
-  SDNPEVNT_DESC *pDesc, 
-  TMWTYPES_UCHAR variation);
+    SDNPEVNT_DESC *pDesc,
+    TMWTYPES_UCHAR variation);
 
 /* function: _isSupportedVariation() */
 static TMWTYPES_BOOL TMWDEFS_LOCAL _isSupportedVariation(
-  TMWTYPES_UCHAR variation)
+    TMWTYPES_UCHAR variation)
 {
- switch(variation)
+  switch (variation)
   {
 #if SDNPDATA_SUPPORT_OBJ32_V1
   case 1:
@@ -85,43 +86,43 @@ static TMWTYPES_BOOL TMWDEFS_LOCAL _isSupportedVariation(
     break;
 #endif
   default:
-    return(TMWDEFS_FALSE);
+    return (TMWDEFS_FALSE);
   }
 
-  return(TMWDEFS_TRUE);
+  return (TMWDEFS_TRUE);
 }
 
 #if SDNPDATA_SUPPORT_EVENT_VAR_POINT
 /* function: _getPointAndDefVariation */
-static void * TMWDEFS_CALLBACK _getPointAndDefVariation(
-  TMWSESN *pSession,
-  TMWTYPES_USHORT pointNumber,
-  TMWDEFS_CLASS_MASK classMask,
-  TMWTYPES_UCHAR *pDefVariation)
+static void *TMWDEFS_CALLBACK _getPointAndDefVariation(
+    TMWSESN *pSession,
+    TMWTYPES_USHORT pointNumber,
+    TMWDEFS_CLASS_MASK classMask,
+    TMWTYPES_UCHAR *pDefVariation)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
   void *pPoint;
 
   pPoint = sdnpdata_anlgInGetPoint(pSDNPSession->pDbHandle, pointNumber);
-  if(pPoint != TMWDEFS_NULL)
+  if (pPoint != TMWDEFS_NULL)
     *pDefVariation = sdnpdata_anlgInEventDefVariation(pPoint, classMask);
   else
     *pDefVariation = pSDNPSession->obj32DefaultVariation;
 
-  return(pPoint);
+  return (pPoint);
 }
 #endif
 
 #if SDNPDATA_SUPPORT_EVENT_MODE_POINT
 /* function: _getPointAndEventMode */
 static TMWDEFS_EVENT_MODE TMWDEFS_CALLBACK _getPointAndEventMode(
-  TMWSESN *pSession,
-  TMWTYPES_USHORT pointNumber)
+    TMWSESN *pSession,
+    TMWTYPES_USHORT pointNumber)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
 
   void *pPoint = sdnpdata_anlgInGetPoint(pSDNPSession->pDbHandle, pointNumber);
-  if(pPoint != TMWDEFS_NULL)
+  if (pPoint != TMWDEFS_NULL)
     return sdnpdata_anlgInEventMode(pPoint);
   else
     return pSDNPSession->analogInputEventMode;
@@ -131,45 +132,47 @@ static TMWDEFS_EVENT_MODE TMWDEFS_CALLBACK _getPointAndEventMode(
 #if SDNPDATA_SUPPORT_EVENT_SCAN
 
 /* function: _getPointAndClass */
-static void * TMWDEFS_CALLBACK _getPointAndClass(
-  TMWSESN *pSession,
-  TMWTYPES_USHORT pointNumber,
-  TMWDEFS_CLASS_MASK *pClassMask)
+static void *TMWDEFS_CALLBACK _getPointAndClass(
+    TMWSESN *pSession,
+    TMWTYPES_USHORT pointNumber,
+    TMWDEFS_CLASS_MASK *pClassMask)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
   void *pPoint;
 
   pPoint = sdnpdata_anlgInGetPoint(pSDNPSession->pDbHandle, pointNumber);
-  if(pPoint != TMWDEFS_NULL)
+  if (pPoint != TMWDEFS_NULL)
     *pClassMask = sdnpdata_anlgInEventClass(pPoint);
 
-  return(pPoint);
+  return (pPoint);
 }
 
 /* function: _changedFunc */
 static TMWTYPES_BOOL TMWDEFS_CALLBACK _changedFunc(
-  TMWSESN *pSession,
-  void *pPoint,
-  TMWTYPES_USHORT pointNum,
-  TMWDTIME *pTimeStamp)
+    TMWSESN *pSession,
+    void *pPoint,
+    TMWTYPES_USHORT pointNum,
+    TMWDTIME *pTimeStamp)
 {
   TMWTYPES_ANALOG_VALUE value;
   TMWTYPES_UCHAR flags;
+  
 
-  if(sdnpdata_anlgInChanged(pPoint, &value, &flags))
+
+  if (sdnpdata_anlgInChanged(pPoint, &value, &flags))
   {
     sdnpo032_addEvent(pSession, pointNum, &value, flags, pTimeStamp);
-    return(TMWDEFS_TRUE);
+    return (TMWDEFS_TRUE);
   }
 
-  return(TMWDEFS_FALSE);
+  return (TMWDEFS_FALSE);
 }
 #endif
 
 /* function: _initEventDesc */
 static void TMWDEFS_LOCAL _initEventDesc(
-  TMWSESN *pSession,
-  SDNPEVNT_DESC *pDesc)
+    TMWSESN *pSession,
+    SDNPEVNT_DESC *pDesc)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
   pDesc->pSession = pSession;
@@ -195,43 +198,43 @@ static void TMWDEFS_LOCAL _initEventDesc(
 static void TMWDEFS_LOCAL _getCurrentValue(SDNPSESN *pSDNPSession, TMWTYPES_USHORT point, TMWTYPES_ANALOG_VALUE *pValue, TMWTYPES_UCHAR *pFlags)
 {
   void *pPoint = sdnpdata_anlgInGetPoint(pSDNPSession->pDbHandle, point);
-  if(pPoint != TMWDEFS_NULL)
+  if (pPoint != TMWDEFS_NULL)
   {
-    sdnpdata_anlgInRead(pPoint, pValue, pFlags);  
+    sdnpdata_anlgInRead(pPoint, pValue, pFlags);
   }
 }
 
 #if SDNPDATA_SUPPORT_OBJ32_V1
 /* function: _readV1 */
 static void TMWDEFS_CALLBACK _readV1(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_ULONG tmpValue;
   TMWTYPES_UCHAR flags;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     /* Get value, setting over range bit in flags properly */
     flags = pEvent->flags;
-    tmpValue = dnputil_getAnalogValueLong(&pO32Event->value, &flags); 
-    
+    tmpValue = dnputil_getAnalogValueLong(&pO32Event->value, &flags);
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
-    tmpValue = dnputil_getAnalogValueLong(&value, &flags); 
-      
+
+    tmpValue = dnputil_getAnalogValueLong(&value, &flags);
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
 
   /* Write flags */
@@ -246,34 +249,34 @@ static void TMWDEFS_CALLBACK _readV1(
 #if SDNPDATA_SUPPORT_OBJ32_V2
 /* function: _readV2 */
 static void TMWDEFS_CALLBACK _readV2(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_USHORT tmpValue;
   TMWTYPES_UCHAR flags;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     /* Get value, setting over range bit in flags properly */
     flags = pEvent->flags;
-    tmpValue = dnputil_getAnalogValueShort(&pO32Event->value, &flags); 
-    
+    tmpValue = dnputil_getAnalogValueShort(&pO32Event->value, &flags);
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
-    tmpValue = dnputil_getAnalogValueShort(&value, &flags); 
-    
+
+    tmpValue = dnputil_getAnalogValueShort(&value, &flags);
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
 
   /* Write flags */
@@ -288,37 +291,37 @@ static void TMWDEFS_CALLBACK _readV2(
 #if SDNPDATA_SUPPORT_OBJ32_V3
 /* function: _readV3 */
 static void TMWDEFS_CALLBACK _readV3(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_MS_SINCE_70 msSince70;
   TMWTYPES_ULONG tmpValue;
   TMWTYPES_UCHAR flags;
- 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     /* Get value, setting over range bit in flags properly */
     flags = pEvent->flags;
-    tmpValue = dnputil_getAnalogValueLong(&pO32Event->value, &flags); 
+    tmpValue = dnputil_getAnalogValueLong(&pO32Event->value, &flags);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
   else
   {
-    TMWTYPES_ANALOG_VALUE value; 
+    TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
-    tmpValue = dnputil_getAnalogValueLong(&value, &flags); 
+
+    tmpValue = dnputil_getAnalogValueLong(&value, &flags);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
-  
+
   /* Write flags */
   pResponse->pMsgBuf[pResponse->msgLength++] = flags;
 
@@ -336,42 +339,42 @@ static void TMWDEFS_CALLBACK _readV3(
 #if SDNPDATA_SUPPORT_OBJ32_V4
 /* function: _readV4 */
 static void TMWDEFS_CALLBACK _readV4(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_MS_SINCE_70 msSince70;
   TMWTYPES_USHORT tmpValue;
   TMWTYPES_UCHAR flags;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     /* Get value, setting over range bit in flags properly */
     flags = pEvent->flags;
-    tmpValue = dnputil_getAnalogValueShort(&pO32Event->value, &flags); 
-      
+    tmpValue = dnputil_getAnalogValueShort(&pO32Event->value, &flags);
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
+
     /* Get value, setting over range bit in flags properly */
-    tmpValue = dnputil_getAnalogValueShort(&pO32Event->value, &flags); 
-      
+    tmpValue = dnputil_getAnalogValueShort(&pO32Event->value, &flags);
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
-  
+
   /* Write flags */
   pResponse->pMsgBuf[pResponse->msgLength++] = flags;
 
-  /* Write value */ 
+  /* Write value */
   tmwtarg_store16(&tmpValue, &pResponse->pMsgBuf[pResponse->msgLength]);
   pResponse->msgLength += 2;
 
@@ -385,35 +388,35 @@ static void TMWDEFS_CALLBACK _readV4(
 #if SDNPDATA_SUPPORT_OBJ32_V5
 /* function: _readV5 */
 static void TMWDEFS_LOCAL _readV5(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_SFLOAT tmpValue;
-  TMWTYPES_UCHAR flags=0;
+  TMWTYPES_UCHAR flags = 0;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     /* Get value, setting over range bit in flags properly */
     flags = pEvent->flags;
     tmpValue = dnputil_getAnalogValueFloat(&pO32Event->value, &flags);
-      
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
+
     /* Get value, setting over range bit in flags properly */
     tmpValue = dnputil_getAnalogValueFloat(&value, &flags);
-      
+
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
 
   /* Write flags */
@@ -428,33 +431,33 @@ static void TMWDEFS_LOCAL _readV5(
 #if SDNPDATA_SUPPORT_OBJ32_V6
 /* function: _readV6 */
 static void TMWDEFS_LOCAL _readV6(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_DOUBLE dval;
   TMWTYPES_UCHAR flags;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     flags = pEvent->flags;
     dval = dnputil_getAnalogValueDouble(&pO32Event->value);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
+
     dval = dnputil_getAnalogValueDouble(&value);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, TMWDEFS_NULL);
   }
 
   /* Write flags */
@@ -469,38 +472,38 @@ static void TMWDEFS_LOCAL _readV6(
 #if SDNPDATA_SUPPORT_OBJ32_V7
 /* function: _readV7 */
 static void TMWDEFS_LOCAL _readV7(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_MS_SINCE_70 msSince70;
   TMWTYPES_SFLOAT tmpValue;
   TMWTYPES_UCHAR flags;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     flags = pEvent->flags;
     /* Get value, setting over range bit in flags properly */
     tmpValue = dnputil_getAnalogValueFloat(&pO32Event->value, &flags);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
+
     /* Get value, setting over range bit in flags properly */
     tmpValue = dnputil_getAnalogValueFloat(&value, &flags);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
- 
+
   /* Write flags */
   pResponse->pMsgBuf[pResponse->msgLength++] = flags;
 
@@ -518,34 +521,34 @@ static void TMWDEFS_LOCAL _readV7(
 #if SDNPDATA_SUPPORT_OBJ32_V8
 /* function: _readV8 */
 static void TMWDEFS_LOCAL _readV8(
-  TMWSESN *pSession,
-  TMWSESN_TX_DATA *pResponse, 
-  SDNPEVNT *pEvent)
+    TMWSESN *pSession,
+    TMWSESN_TX_DATA *pResponse,
+    SDNPEVNT *pEvent)
 {
   SDNPEVNT_O032_EVENT *pO32Event = (SDNPEVNT_O032_EVENT *)pEvent;
   TMWTYPES_MS_SINCE_70 msSince70;
   TMWTYPES_DOUBLE dval;
   TMWTYPES_UCHAR flags;
 
-  if(pEvent->getCurrentValue == TMWDEFS_FALSE)
+  if (pEvent->getCurrentValue == TMWDEFS_FALSE)
   {
     flags = pEvent->flags;
     dval = dnputil_getAnalogValueDouble(&pO32Event->value);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &pO32Event->value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
   else
   {
     TMWTYPES_ANALOG_VALUE value;
     _getCurrentValue((SDNPSESN *)pEvent->pSession, pEvent->point, &value, &flags);
- 
+
     dval = dnputil_getAnalogValueDouble(&value);
 
     /* Diagnostics */
-    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point, 
-      &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
+    DNPDIAG_SHOW_ANALOG_INPUT(pSession, pEvent->point,
+                              &value, flags, TMWDEFS_TRUE, &pEvent->timeStamp);
   }
 
   /* Write flags */
@@ -564,17 +567,17 @@ static void TMWDEFS_LOCAL _readV8(
 
 /* function: _setVariationInfo() */
 static void TMWDEFS_LOCAL _setVariationInfo(
-  SDNPEVNT_DESC *pDesc, 
-  TMWTYPES_UCHAR variation)
+    SDNPEVNT_DESC *pDesc,
+    TMWTYPES_UCHAR variation)
 {
 
-  switch(variation)
+  switch (variation)
   {
   default:
-    /* Fall through to first one that is supported */ 
+    /* Fall through to first one that is supported */
     /* 1 is the preferred default */
 #if SDNPDATA_SUPPORT_OBJ32_V1
-  case 1:  
+  case 1:
     pDesc->variation = 1;
     pDesc->sizeInBytes = 5;
     pDesc->pReadIntoRespFunc = _readV1;
@@ -634,13 +637,13 @@ static void TMWDEFS_LOCAL _setVariationInfo(
 
 /* function: sdnpo032_init */
 void TMWDEFS_GLOBAL sdnpo032_init(
-  TMWSESN *pSession)
+    TMWSESN *pSession)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
 
   sdnpevnt_init(
-    &pSDNPSession->obj32Timer, 
-    &pSDNPSession->obj32Events);
+      &pSDNPSession->obj32Timer,
+      &pSDNPSession->obj32Events);
 }
 
 #if SDNPDATA_SUPPORT_EVENT_SCAN
@@ -654,32 +657,32 @@ static void TMWDEFS_CALLBACK _scanTimeout(void *pParam)
   _initEventDesc(pSession, &desc);
   sdnpevnt_scanForChanges(pSession, &desc);
 
-  if(pSDNPSession->analogInputScanPeriod != 0)
+  if (pSDNPSession->analogInputScanPeriod != 0)
   {
-    tmwtimer_start(&pSDNPSession->obj32Timer, 
-      pSDNPSession->analogInputScanPeriod, 
-      pSession->pChannel, _scanTimeout, pSession);
+    tmwtimer_start(&pSDNPSession->obj32Timer,
+                   pSDNPSession->analogInputScanPeriod,
+                   pSession->pChannel, _scanTimeout, pSession);
   }
 }
 
 /* function: sdnpo032_open */
 void TMWDEFS_GLOBAL sdnpo032_open(
-  TMWSESN *pSession)
+    TMWSESN *pSession)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
 
-  if(pSDNPSession->analogInputScanPeriod != 0)
+  if (pSDNPSession->analogInputScanPeriod != 0)
   {
-    tmwtimer_start(&pSDNPSession->obj32Timer, 
-      pSDNPSession->analogInputScanPeriod, 
-      pSession->pChannel, _scanTimeout, pSession);
+    tmwtimer_start(&pSDNPSession->obj32Timer,
+                   pSDNPSession->analogInputScanPeriod,
+                   pSession->pChannel, _scanTimeout, pSession);
   }
 }
 #endif
 
 /* function: sdnpo032_close */
 void TMWDEFS_GLOBAL sdnpo032_close(
-  TMWSESN *pSession)
+    TMWSESN *pSession)
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
 
@@ -693,18 +696,19 @@ void TMWDEFS_GLOBAL sdnpo032_close(
 
 /* function: sdnpo032_addEvent */
 void TMWDEFS_GLOBAL sdnpo032_addEvent(
-  TMWSESN *pSession, 
-  TMWTYPES_USHORT point, 
-  TMWTYPES_ANALOG_VALUE *pValue, 
-  TMWTYPES_UCHAR flags, 
-  TMWDTIME *pTimeStamp)
+    TMWSESN *pSession,
+    TMWTYPES_USHORT point,
+    TMWTYPES_ANALOG_VALUE *pValue,
+    TMWTYPES_UCHAR flags,
+    TMWDTIME *pTimeStamp)
+
 {
   SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
 #if TMWCNFG_SUPPORT_THREADS
   TMWDEFS_RESOURCE_LOCK *pLock = &pSession->pChannel->lock;
 #endif
   SDNPEVNT_DESC desc;
-  void *pPoint; 
+  void *pPoint;
   SDNPDATA_ADD_EVENT_VALUE value;
 
   _initEventDesc(pSession, &desc);
@@ -712,13 +716,105 @@ void TMWDEFS_GLOBAL sdnpo032_addEvent(
 
   TMWTARG_LOCK_SECTION(pLock);
 
+  struct mqtt_client client;
+  void publish_callback(void **unused, struct mqtt_response_publish *published);
+  void *client_refresher(void *client);
+  void exit_example(int status, int sockfd, pthread_t *client_daemon);
+
   /* Get point event belongs to */
   pPoint = sdnpdata_anlgInGetPoint(pSDNPSession->pDbHandle, point);
-  if(pPoint != TMWDEFS_NULL)
+
+  if (pPoint != TMWDEFS_NULL)
   {
     TMWDEFS_CLASS_MASK eventClass = sdnpdata_anlgInEventClass(pPoint);
-    value.analogPtr = pValue; 
+    value.analogPtr = pValue;
+
     sdnpevnt_addEvent(pSession, point, flags, eventClass, pTimeStamp, &desc, &value);
+    
+    const char addr[] = "192.168.197.195";
+    const char port[] = "1883";
+
+    // const char str[] = "A";
+    // char buffer[20];
+    // sprintf(buffer,"%ls_%d", str,point);
+    char topic [] = "datetime";
+
+    int sockfd;
+    const char *client_id = NULL;
+    // uint8_t *sendbuf;
+    // uint8_t *recvbuf;
+    /* Create an anonymous session */
+
+    /* Ensure we have a clean session */
+    uint8_t connect_flags = MQTT_CONNECT_CLEAN_SESSION;
+    uint8_t sendbuf[2048]; /* sendbuf should be large enough to hold multiple whole mqtt messages */
+    uint8_t recvbuf[1024]; /* recvbuf should be large enough any whole mqtt message expected to be received */
+
+
+    int open_nb_socket(const char *addr, const char *port);
+
+    /* open the non-blocking TCP socket (connecting to the broker) */
+    sockfd = open_nb_socket(addr, port);
+
+    if (sockfd == -1)
+    {
+      perror("Failed to open socket: ");
+      exit_example(EXIT_FAILURE, sockfd, NULL);
+    }
+
+    mqtt_init(&client, sockfd, sendbuf, sizeof(sendbuf), recvbuf, sizeof(recvbuf), publish_callback);
+    /* Send connection request to the broker. */
+
+    mqtt_connect(&client, client_id, NULL, NULL, 0, NULL, NULL, connect_flags, 400);
+
+    /* check that we don't have any errors */
+    if (client.error != MQTT_OK)
+    {
+      fprintf(stderr, "error: %s\n", mqtt_error_str(client.error));
+      exit_example(EXIT_FAILURE, sockfd, NULL);
+    }
+
+    /* start a thread to refresh the client (handle egress and ingree client traffic) */
+    pthread_t client_daemon;
+    if (pthread_create(&client_daemon, NULL, client_refresher, &client))
+    {
+      fprintf(stderr, "Failed to start client daemon.\n");
+      exit_example(EXIT_FAILURE, sockfd, NULL);
+    }
+
+    enum MQTTErrors mqtt_sync(struct mqtt_client * client);
+    const char *mqtt_error_str(enum MQTTErrors error);
+
+   int val = 1;
+    while (val)
+    {
+      val=0;
+      /* print a message */
+      char application_message[1024];
+      TMWTYPES_ANALOG_VALUE analogValue=*pValue;
+      analogValue.type = TMWTYPES_ANALOG_TYPE_DOUBLE;
+
+      printf("value of publish MQTT___________________%lf\n",analogValue.value.dval);
+
+      double trash_buf = analogValue.value.dval;
+      snprintf(application_message, sizeof(application_message), " %s", trash_buf);
+      mqtt_publish(&client, topic, application_message, strlen(application_message) + 1, MQTT_PUBLISH_QOS_0);  
+      
+      /* check for errors */
+
+      if (client.error != MQTT_OK)
+      {
+        fprintf(stderr, "error: %s\n", mqtt_error_str(client.error));
+        exit_example(EXIT_FAILURE, sockfd, &client_daemon);
+      }
+    }
+
+    /* disconnect */
+    // printf("\n%s disconnecting from %s\n", argv[0], addr);
+    sleep(1);
+
+    /* exit */
+    // exit_example(EXIT_SUCCESS, sockfd, &client_daemon);
   }
   else
   {
@@ -728,89 +824,113 @@ void TMWDEFS_GLOBAL sdnpo032_addEvent(
   TMWTARG_UNLOCK_SECTION(pLock);
 }
 
+void exit_example(int status, int sockfd, pthread_t *client_daemon)
+{
+  if (sockfd != -1)
+    close(sockfd);
+  if (client_daemon != NULL)
+    pthread_cancel(*client_daemon);
+  exit(status);
+}
+
+void publish_callback(void **unused, struct mqtt_response_publish *published)
+{
+  // printf("This is an publish callback event handler");
+}
+
+void *client_refresher(void *client)
+{
+  while (1)
+  {
+    mqtt_sync((struct mqtt_client *)client);
+    usleep(100000U);
+  }
+  return NULL;
+}
+
 /* function: sdnpo032_countEvents */
 TMWTYPES_USHORT TMWDEFS_GLOBAL sdnpo032_countEvents(
-  TMWSESN *pSession, 
-  TMWDEFS_CLASS_MASK classMask,
-  TMWTYPES_BOOL countAll,
-  TMWTYPES_USHORT threshold)
+    TMWSESN *pSession,
+    TMWDEFS_CLASS_MASK classMask,
+    TMWTYPES_BOOL countAll,
+    TMWTYPES_USHORT threshold)
 {
   SDNPEVNT_DESC desc;
   _initEventDesc(pSession, &desc);
-  return(sdnpevnt_countEvents(pSession, classMask, &desc, countAll, threshold));
+  return (sdnpevnt_countEvents(pSession, classMask, &desc, countAll, threshold));
 }
 
 /* function: sdnpo032_cleanupEvents() */
 TMWTYPES_BOOL TMWDEFS_GLOBAL sdnpo032_cleanupEvents(
-  TMWSESN *pSession, 
-  TMWTYPES_BOOL deleteEvents)
+    TMWSESN *pSession,
+    TMWTYPES_BOOL deleteEvents)
 {
   SDNPEVNT_DESC desc;
   _initEventDesc(pSession, &desc);
-  return(sdnpevnt_cleanupEvents(deleteEvents, &desc));
+  return (sdnpevnt_cleanupEvents(deleteEvents, &desc));
 }
 
 /* function: sdnpo032_readObj32v0 */
 SDNPSESN_READ_STATUS TMWDEFS_CALLBACK sdnpo032_readObj32(
-  TMWSESN *pSession,
-  DNPUTIL_RX_MSG *pRequest,
-  TMWSESN_TX_DATA *pResponse, 
-  DNPUTIL_OBJECT_HEADER *pObjHeader,
-  SDNPSESN_QUAL qualifier)
+    TMWSESN *pSession,
+    DNPUTIL_RX_MSG *pRequest,
+    TMWSESN_TX_DATA *pResponse,
+    DNPUTIL_OBJECT_HEADER *pObjHeader,
+    SDNPSESN_QUAL qualifier)
 {
 
-  if(qualifier != SDNPSESN_QUAL_BUILD_RESPONSE)
+  if (qualifier != SDNPSESN_QUAL_BUILD_RESPONSE)
   {
-    return(SDNPSESN_READ_COMPLETE);
+    return (SDNPSESN_READ_COMPLETE);
   }
 
-  if(pObjHeader->variation == 0)
+  if (pObjHeader->variation == 0)
   {
-    return(sdnpo032_readObj32v0ByClass(pSession, pRequest, pResponse, pObjHeader, TMWDEFS_CLASS_MASK_ALL));
+    return (sdnpo032_readObj32v0ByClass(pSession, pRequest, pResponse, pObjHeader, TMWDEFS_CLASS_MASK_ALL));
   }
   else
   {
-    SDNPEVNT_DESC desc;  
-    SDNPSESN *pSDNPSession = (SDNPSESN *)pSession; 
+    SDNPEVNT_DESC desc;
+    SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
     TMWTYPES_UCHAR variation = pObjHeader->variation;
 
-    if(!_isSupportedVariation(variation))
+    if (!_isSupportedVariation(variation))
     {
-      pSDNPSession->iin |= DNPDEFS_IIN_OBJECT_UNKNOWN; 
+      pSDNPSession->iin |= DNPDEFS_IIN_OBJECT_UNKNOWN;
       return (SDNPSESN_READ_FAILED);
     }
 
     /* If other supported variation */
     _initEventDesc(pSession, &desc);
     desc.readVariation = variation;
-    _setVariationInfo(&desc, variation); 
+    _setVariationInfo(&desc, variation);
 
-    return(sdnpevnt_readEvents(pSession, pResponse, pObjHeader, TMWDEFS_CLASS_MASK_ALL, &desc));
+    return (sdnpevnt_readEvents(pSession, pResponse, pObjHeader, TMWDEFS_CLASS_MASK_ALL, &desc));
   }
 }
- 
+
 /* function: sdnpo032_readObj32v0ByClass */
 SDNPSESN_READ_STATUS TMWDEFS_CALLBACK sdnpo032_readObj32v0ByClass(
-  TMWSESN *pSession, 
-  DNPUTIL_RX_MSG *pRequest,
-  TMWSESN_TX_DATA *pResponse, 
-  DNPUTIL_OBJECT_HEADER *pObjHeader,
-  TMWDEFS_CLASS_MASK classMask)
+    TMWSESN *pSession,
+    DNPUTIL_RX_MSG *pRequest,
+    TMWSESN_TX_DATA *pResponse,
+    DNPUTIL_OBJECT_HEADER *pObjHeader,
+    TMWDEFS_CLASS_MASK classMask)
 {
   SDNPEVNT_DESC desc;
-  SDNPSESN *pSDNPSession = (SDNPSESN*)pSession;
+  SDNPSESN *pSDNPSession = (SDNPSESN *)pSession;
   TMWTARG_UNUSED_PARAM(pRequest);
 
   _initEventDesc(pSession, &desc);
   desc.readVariation = 0;
 
   _setVariationInfo(&desc, pSDNPSession->obj32DefaultVariation);
- 
+
 #if SDNPDATA_SUPPORT_EVENT_VAR_POINT
-  if(pSDNPSession->obj32DefaultVariation == 0)
+  if (pSDNPSession->obj32DefaultVariation == 0)
     desc.variation = 0;
 #endif
 
-  return(sdnpevnt_readEvents(pSession, pResponse, pObjHeader, classMask, &desc));
+  return (sdnpevnt_readEvents(pSession, pResponse, pObjHeader, classMask, &desc));
 }
 #endif /* SDNPDATA_SUPPORT_OBJ32 */

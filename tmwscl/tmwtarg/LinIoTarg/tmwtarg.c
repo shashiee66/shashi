@@ -447,6 +447,9 @@ TMWTYPES_BOOL TMWDEFS_GLOBAL tmwtarg_setDateTime(
 {
   struct tm timeToSet;
   time_t wrTime;
+  struct timespec timespec_val;
+
+
 
   timeToSet.tm_year = pDateTime->year - 1900;
   timeToSet.tm_mon = (int)pDateTime->month - 1;
@@ -456,10 +459,11 @@ TMWTYPES_BOOL TMWDEFS_GLOBAL tmwtarg_setDateTime(
   timeToSet.tm_sec = pDateTime->mSecsAndSecs / 1000;
 
   wrTime = mktime(&timeToSet);
+
+  timespec_val.tv_sec = wrTime;
+  timespec_val.tv_nsec = 0;
   
-
-
-  if( clock_settime(CLOCK_REALTIME, (struct timespec*){wrTime,0}) )
+  if( clock_settime(CLOCK_REALTIME, &timespec_val) )
     perror( "Time set failed.\n" );
 
   return(TMWDEFS_TRUE);

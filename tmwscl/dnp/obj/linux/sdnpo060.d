@@ -30,8 +30,7 @@ obj/linux/sdnpo060.o: sdnpo060.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpo043.h ../../tmwscl/dnp/sdnpo070.h \
  ../../tmwscl/dnp/sdnpo088.h ../../tmwscl/dnp/sdnpo111.h \
  ../../tmwscl/dnp/sdnpo113.h ../../tmwscl/dnp/sdnpo115.h \
- ../../tmwscl/dnp/sdnpo120.h ../../tmwscl/dnp/sdnpauth.h \
- ../../tmwscl/dnp/sdnpo122.h ../../tmwscl/dnp/sdnprbe.h \
+ ../../tmwscl/dnp/sdnpo120.h ../../tmwscl/dnp/sdnprbe.h \
  ../../tmwscl/dnp/sdnputil.h
 
 ../../tmwscl/dnp/dnpdiag.h:
@@ -161,10 +160,6 @@ obj/linux/sdnpo060.o: sdnpo060.c ../../tmwscl/dnp/dnpdiag.h \
 ../../tmwscl/dnp/sdnpo115.h:
 
 ../../tmwscl/dnp/sdnpo120.h:
-
-../../tmwscl/dnp/sdnpauth.h:
-
-../../tmwscl/dnp/sdnpo122.h:
 
 ../../tmwscl/dnp/sdnprbe.h:
 

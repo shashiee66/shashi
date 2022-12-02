@@ -19,7 +19,8 @@ obj/linux/sdnpo032.o: sdnpo032.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpcnfg.h ../../tmwscl/dnp/sdnpdata.h \
  ../../tmwscl/dnp/sdnpsesp.h ../../tmwscl/dnp/sdnpxml.h \
  ../../tmwscl/dnp/sdnpxml2.h ../../tmwscl/dnp/sdnpevnt.h \
- ../../tmwscl/dnp/sdnpmem.h ../../tmwscl/dnp/dnpmem.h \
+ ../../tmwscl/dnp/sdnpmem.h ../../tmwscl/dnp/dnpmem.h ../../mqtt.h \
+ ../../mqtt_pal.h ../../templates/posix_sockets.h \
  ../../tmwscl/dnp/dnpdtime.h ../../tmwscl/dnp/sdnputil.h \
  ../../tmwscl/dnp/sdnpunsl.h ../../tmwscl/dnp/sdnpo032.h
 
@@ -108,6 +109,12 @@ obj/linux/sdnpo032.o: sdnpo032.c ../../tmwscl/dnp/dnpdiag.h \
 ../../tmwscl/dnp/sdnpmem.h:
 
 ../../tmwscl/dnp/dnpmem.h:
+
+../../mqtt.h:
+
+../../mqtt_pal.h:
+
+../../templates/posix_sockets.h:
 
 ../../tmwscl/dnp/dnpdtime.h:
 

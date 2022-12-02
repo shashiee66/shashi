@@ -28,14 +28,26 @@
 //
 
 #if defined(TMW_WTK_TARGET)
+
 #include "StdAfx.h"
 #endif
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <mqtt_pal.h>
+#include <mqtt.h>
+#define __MQTT_H__
+#include "templates/posix_sockets.h"
+
+void publish_callback(void** unused, struct mqtt_response_publish *published);
+
 
 extern "C" {
 #include "tmwscl/utils/tmwdb.h"
 #include "tmwscl/utils/tmwpltmr.h"
 #include "tmwscl/utils/tmwtarg.h"
-
 #include "tmwscl/dnp/dnpchnl.h"
 #include "tmwscl/dnp/sdnpsesn.h"
 #if TMWCNFG_USE_SIMULATED_DB
@@ -43,10 +55,9 @@ extern "C" {
 #endif
 #include "tmwscl/dnp/sdnpo032.h"
 #include "tmwscl/dnp/sdnputil.h"
-
 #include "tmwtargio.h"
 }
-
+// const char* client_id = NULL;
 /* The USE_POLLED_MODE constant is used here to demonstrate how the library
  * can be used to configure the target layer to support polled mode vs.
  * event driven. The Linux and Windows target layers shipped with the SCL
@@ -65,7 +76,7 @@ TMWTYPES_BOOL   openSecondConnection = TMWDEFS_FALSE;
 TMWTYPES_BOOL     noUserAtStartup = TMWDEFS_FALSE;
 #endif
 
-
+struct mqtt_client client;
 
 #if !TMWCNFG_MULTIPLE_TIMER_QS
 /* forward references */
@@ -75,15 +86,10 @@ void myPutDiagString(const TMWDIAG_ANLZ_ID *pAnlzId, const TMWTYPES_CHAR *pStrin
 void              myInitSecureAuthentication(SDNPSESN_CONFIG *pSesnConfig);
 TMWTYPES_BOOL     myAddAuthUsers(SDNPSESN *pSDNPSession, TMWTYPES_BOOL operateInV2Mode);
 
-/* These are the default user keys the test harness uses for testing 
+/* These are the default user keys the tanalogVal = analogValue.value.dval;est harness uses for testing 
  * DO NOT USE THESE IN A REAL DEVICE
  */
-static TMWTYPES_UCHAR defaultUserKey1[] = {
-  0x49, 0xC8, 0x7D, 0x5D, 0x90, 0x21, 0x7A, 0xAF, 
-  0xEC, 0x80, 0x74, 0xeb, 0x71, 0x52, 0xfd, 0xb5
-};
-static TMWTYPES_UCHAR defaultUserKeyOther[] = {
-  0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 
+static TMWTYPES_UCHAR defaultUserKey1[]analogVal = analogValue.value.dval;x66, 0x77, 
   0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff
 }; 
 
@@ -100,6 +106,7 @@ static TMWTYPES_UCHAR  authoritySymCertKey[] = {
 /* Main entry point */
 int main(int argc, char* argv[])
 {
+
   TMWAPPL *pApplContext;
   TMWCHNL *pSclChannel;
   TMWSESN *pSclSession;
@@ -265,7 +272,7 @@ int main(int argc, char* argv[])
       IOCnfg.targTCP.mode = TMWTARGTCP_MODE_UDP;
       linkConfig.networkType = DNPLINK_NETWORK_UDP_ONLY;
 
-      /* if UDP ONLY, the IP address of the master must be specified */
+      /* if UDP ONLY, the IP advaluedress of the master must be specified */
       strcpy(IOCnfg.targTCP.ipAddress, "127.0.0.1");
       
       /* Choose the local UDP port to send and receive on */
@@ -355,7 +362,7 @@ int main(int argc, char* argv[])
     TMWCHNL *pSclChannel2;
     TMWSESN *pSclSession2;
     strcpy(IOCnfg.targTCP.chnlName, "Second"); 
-    IOCnfg.targTCP.ipPort = 20001;
+    IOCnfg.targTCP.ipPort = 20000;
     IOCnfg.targTCP.polledMode = USE_POLLED_MODE;
 
     /* Open Second DNP channel */
@@ -395,7 +402,7 @@ int main(int argc, char* argv[])
         return (1);
       }
     }
-#endif 
+#endif void publish_callback(void** unused, struct mqtt_response_publish *published);
   }
 
 
@@ -432,14 +439,56 @@ int main(int argc, char* argv[])
      *       in this value being updated by the SCL scan.
      */
     addEventCtr++;
+
+   
+    
     if ((addEventCtr % 100) == 0)
     {
       TMWTYPES_ANALOG_VALUE analogValue;
       TMWDTIME timeStamp;
-      sdnputil_getDateTime(pSclSession, &timeStamp);
+
+      struct mqtt_response_publish *published;
+      //192.168.197.195
+      const char addr[] = "192.168.197.195";
+      const char port[] = "1883";
+
+      // const char str[] = "A";
+      // char buffer[20];
+      // sprintf(buffer,"%ls_%d", str,point);
+      char topic [] = "datetime";
+
+      int sockfd;
+      const char *client_id = NULL;
+      // uint8_t *sendbuf;
+      // uint8_t *recvbuf;
+      /* Create an anonymous session */
+
+      /* Ensure we have a clean session */
+      uint8_t connect_flags = MQTT_CONNECT_CLEAN_SESSION;
+      uint8_t sendbuf[2048]; /* sendbuf should be large enough to hold multiple whole mqtt messages */
+      uint8_t recvbuf[1024]; /* recvbuf should be large enough any whole mqtt message expected to be received */
+
+
+      int open_nb_socket(const char *addr, const char *port);
+
+      /* open the non-blocking TCP socket (connecting to the broker) */
+      sockfd = open_nb_socket(addr, port);
+
+      if (sockfd == -1)
+      {
+        perror("Failed to open socket: ");
+      }
+      /* Send connection request to the broker. */
+
+      mqtt_connect(&client, client_id, NULL, NULL, 0, NULL, NULL, connect_flags, 400);
+      mqtt_subscribe(&client, topic, 0);
+
+      
+
+
       analogValue.value.dval = rand();
       analogValue.type = TMWTYPES_ANALOG_TYPE_DOUBLE;
-
+      printf("value of publish SLAVE___________________%lf \n",analogValue.value.dval);
       sdnpo032_addEvent(pSclSession, anlgInPointNum,
         &analogValue, DNPDEFS_DBAS_FLAG_ON_LINE,
         &timeStamp);
@@ -449,6 +498,7 @@ int main(int argc, char* argv[])
         anlgInPointNum = 0;
       }
     }
+
     /* End addEvent example. */
   }
  
@@ -479,20 +529,12 @@ void myInitSecureAuthentication(SDNPSESN_CONFIG *pSesnConfig)
 
   /* For SAv2 configure the same user numbers and update keys for each user 
    * number on both master and outstation devices. These must be configured before the 
-   * session is opened.
+   * session is opened.value
    * SAv5 allows User Update Keys to also be sent to the outstation over DNP.
    */ 
 
 #if SDNPCNFG_SUPPORT_SA_VERSION2 
-  /* Use Secure Authentication Version 2 */
-  if(myUseSAv2)
-  {
-    pSesnConfig->authConfig.operateInV2Mode = TMWDEFS_TRUE;
-    pSesnConfig->authConfig.maxErrorCount = 2;
-
-    /* Configure user numbers */
-    /* Spec says default user number 1 provides a user number for the device or "any" user */
-    pSesnConfig->authConfig.authUsers[0].userNumber = DNPAUTH_DEFAULT_USERNUMBER;
+  /* Use Secure Authentication Version 2 */valuer = DNPAUTH_DEFAULT_USERNUMBER;
   }
 #endif
   /* Example configuration. Some of these may be the default values,
@@ -505,7 +547,7 @@ void myInitSecureAuthentication(SDNPSESN_CONFIG *pSesnConfig)
   pSesnConfig->authConfig.keyChangeInterval = 120000;  
   pSesnConfig->authConfig.assocId = 0;
 }
-
+value
 TMWTYPES_BOOL myAddAuthUsers(SDNPSESN *pSDNPSession, TMWTYPES_BOOL operateInV2Mode)
 {
 
@@ -690,3 +732,36 @@ void myPutDiagString(const TMWDIAG_ANLZ_ID *pAnlzId,const TMWTYPES_CHAR *pString
 }
 #endif
 #endif
+
+
+
+
+/**
+ * @brief The function that would be called whenever a PUBLISH is received.
+ *
+ * @note This function is not used in this example.
+ */
+
+
+/**
+ * @brief The client's refresher. This function triggers back-end routines to
+ *        handle ingress/egress traffic to the broker.
+ *
+ * @note All this function needs to do is call \ref __mqtt_recv and
+ *       \ref __mqtt_send every so often. I've picked 100 ms meaning that
+ *       client ingress/egress traffic will be handled every 100 ms.
+ */
+void* client_refresher(void* client);
+
+/**
+ * @brief Safelty closes the \p sockfd and cancels the \p client_daemon before \c exit.
+ */
+void exit_example(int status, int sockfd, pthread_t *client_daemon);
+    
+/**
+ * A simple program to that publishes the current time whenever ENTER is pressed.
+ */
+
+ssize_t __mqtt_recv(struct mqtt_client *client);
+
+ssize_t __mqtt_send(struct mqtt_client *client);

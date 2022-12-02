@@ -110,6 +110,8 @@ static const DNPDIAG_ERROR_ENTRY sdnpDiagErrorMsg[] = {
   {SDNPDIAG_AUTH_AUTHORFAIL   ,  "Secure Authentication, Authorization Failed"},
   {SDNPDIAG_AUTH_USEREXPIRED  ,  "Secure Authentication, User Role has expired" },
   {SDNPDIAG_AUTH_BADSIGNATURE ,  "Secure Authentication, Signature not verified" },
+  {SDNPDIAG_CUSTOM1           ,  "Transmitting now" },
+
 
   {SDNPDIAG_ERROR_ENUM_MAX    ,  ""}
 };

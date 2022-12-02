@@ -29,6 +29,11 @@
  *  a physical layer interface as defined in tmwphys.h. This physical layer
  *  can be used by any of the TMW protocol.
  */
+
+#include "tmwscl/dnp/dnpdiag.h"
+#include "tmwscl/dnp/sdnpdiag.h"
+
+
 #include "tmwscl/utils/tmwtarg.h"
 #include "tmwscl/utils/tmwphys.h"
 #include "tmwscl/utils/tmwtimer.h"
@@ -156,6 +161,7 @@ static void TMWDEFS_CALLBACK _transmitReadyCallback(
     pContext->pTxDescriptor->beforeTxCallback(pContext->pTxDescriptor->pCallbackParam);
   }
 
+  SDNPDIAG_ERROR(pContext->pChannel, NULL, SDNPDIAG_CUSTOM1);
   /* Low level transmit routine */
   transmitOk = tmwtarg_transmit(pContext->pIOContext,
     pContext->pTxDescriptor->pTxBuffer, pContext->pTxDescriptor->numBytesToTx);

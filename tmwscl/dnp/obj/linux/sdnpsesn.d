@@ -40,9 +40,7 @@ obj/linux/sdnpsesn.o: sdnpsesn.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpo110.h ../../tmwscl/dnp/sdnpo111.h \
  ../../tmwscl/dnp/sdnpo112.h ../../tmwscl/dnp/sdnpo113.h \
  ../../tmwscl/dnp/sdnpo114.h ../../tmwscl/dnp/sdnpo115.h \
- ../../tmwscl/dnp/sdnpo120.h ../../tmwscl/dnp/sdnpauth.h \
- ../../tmwscl/dnp/sdnpsa.h ../../tmwscl/dnp/sdnpo121.h \
- ../../tmwscl/dnp/sdnpo122.h
+ ../../tmwscl/dnp/sdnpo120.h
 
 ../../tmwscl/dnp/dnpdiag.h:
 
@@ -211,11 +209,3 @@ obj/linux/sdnpsesn.o: sdnpsesn.c ../../tmwscl/dnp/dnpdiag.h \
 ../../tmwscl/dnp/sdnpo115.h:
 
 ../../tmwscl/dnp/sdnpo120.h:
-
-../../tmwscl/dnp/sdnpauth.h:
-
-../../tmwscl/dnp/sdnpsa.h:
-
-../../tmwscl/dnp/sdnpo121.h:
-
-../../tmwscl/dnp/sdnpo122.h:

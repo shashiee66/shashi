@@ -21,7 +21,7 @@ obj/linux/sdnpo122.o: sdnpo122.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpxml2.h ../../tmwscl/dnp/sdnpevnt.h \
  ../../tmwscl/dnp/sdnpmem.h ../../tmwscl/dnp/dnpmem.h \
  ../../tmwscl/dnp/dnpdtime.h ../../tmwscl/dnp/sdnputil.h \
- ../../tmwscl/dnp/sdnpunsl.h ../../tmwscl/dnp/sdnpo122.h
+ ../../tmwscl/dnp/sdnpunsl.h
 
 ../../tmwscl/dnp/dnpdiag.h:
 
@@ -114,5 +114,3 @@ obj/linux/sdnpo122.o: sdnpo122.c ../../tmwscl/dnp/dnpdiag.h \
 ../../tmwscl/dnp/sdnputil.h:
 
 ../../tmwscl/dnp/sdnpunsl.h:
-
-../../tmwscl/dnp/sdnpo122.h:

@@ -131,6 +131,8 @@ static TMWTYPES_BOOL TMWDEFS_CALLBACK _changedFunc(
 {
   TMWTYPES_UCHAR flags;
 
+  //printf("TKV:%s %d", __FILE__, __LINE__);
+
   if(sdnpdata_binInChanged(pPoint, &flags))
   {
     sdnpo002_addEvent(pSession, pointNum, flags, pTimeStamp);

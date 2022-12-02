@@ -29,8 +29,7 @@ obj/linux/sdnpunsl.o: sdnpunsl.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpo043.h ../../tmwscl/dnp/sdnpo070.h \
  ../../tmwscl/dnp/sdnpo088.h ../../tmwscl/dnp/sdnpo111.h \
  ../../tmwscl/dnp/sdnpo113.h ../../tmwscl/dnp/sdnpo115.h \
- ../../tmwscl/dnp/sdnpo122.h ../../tmwscl/dnp/sdnpunsl.h \
- ../../tmwscl/dnp/sdnpauth.h
+ ../../tmwscl/dnp/sdnpunsl.h
 
 ../../tmwscl/dnp/dnpdiag.h:
 
@@ -154,8 +153,4 @@ obj/linux/sdnpunsl.o: sdnpunsl.c ../../tmwscl/dnp/dnpdiag.h \
 
 ../../tmwscl/dnp/sdnpo115.h:
 
-../../tmwscl/dnp/sdnpo122.h:
-
 ../../tmwscl/dnp/sdnpunsl.h:
-
-../../tmwscl/dnp/sdnpauth.h:

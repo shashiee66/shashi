@@ -20,8 +20,6 @@ obj/linux/sdnpdata.o: sdnpdata.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpxml.h ../../tmwscl/dnp/sdnpxml2.h \
  ../../tmwscl/dnp/sdnpsim.h ../../tmwscl/utils/tmwsim.h \
  ../../tmwscl/dnp/sdnpfsim.h ../../tmwscl/dnp/sdnpo120.h \
- ../../tmwscl/dnp/sdnpauth.h ../../tmwscl/dnp/sdnpevnt.h \
- ../../tmwscl/dnp/sdnpmem.h ../../tmwscl/dnp/dnpmem.h \
  ../../tmwscl/dnp/sdnptarg.h
 
 ../../tmwscl/dnp/dnpdiag.h:
@@ -109,13 +107,5 @@ obj/linux/sdnpdata.o: sdnpdata.c ../../tmwscl/dnp/dnpdiag.h \
 ../../tmwscl/dnp/sdnpfsim.h:
 
 ../../tmwscl/dnp/sdnpo120.h:
-
-../../tmwscl/dnp/sdnpauth.h:
-
-../../tmwscl/dnp/sdnpevnt.h:
-
-../../tmwscl/dnp/sdnpmem.h:
-
-../../tmwscl/dnp/dnpmem.h:
 
 ../../tmwscl/dnp/sdnptarg.h:

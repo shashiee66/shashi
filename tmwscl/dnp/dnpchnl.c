@@ -516,6 +516,7 @@ void TMWDEFS_CALLBACK dnpchnl_processFragment(
 
   pRxFragment->invalidFormat = TMWDEFS_FALSE;
 
+  //printf("TKV: >>>>>>>>>>PROCESSFRAGMENT");
   /* Diagnostics */
   DNPDIAG_FRAGMENT_RECEIVED(pSession->pChannel, pSession,
     pRxFragment->pMsgBuf, pRxFragment->msgLength);
@@ -557,11 +558,13 @@ static TMWTYPES_BOOL TMWDEFS_CALLBACK _checkDataAvailable(
 
   dataSent = TMWDEFS_FALSE;
 
+  //printf("TKV: >>>>>>>>>>>>>CHECKDATA AVAILABLE");
   pTxData = TMWDEFS_NULL;
   while((pTxData = (DNPCHNL_TX_DATA *)tmwdlist_getAfter(
     &pChannel->messageQueue, (TMWDLIST_MEMBER *)pTxData)) != TMWDEFS_NULL)
   {
     TMWTYPES_UCHAR fc;
+    //printf("TKV: >>>>>>>>>>>>>CHECKDATA INSIDE WHILE LOOP START");
 
     /* If this has already been sent, look at the next message. */
     if(pTxData->sent)

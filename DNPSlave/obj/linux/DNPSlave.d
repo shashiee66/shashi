@@ -1,4 +1,5 @@
-obj/linux/DNPSlave.o: DNPSlave.cpp ../tmwscl/utils/tmwdb.h \
+obj/linux/DNPSlave.o: DNPSlave.cpp ../mqtt_pal.h ../mqtt.h \
+ ../templates/posix_sockets.h ../tmwscl/utils/tmwdb.h \
  ../tmwscl/utils/tmwdefs.h ../tmwscl/utils/tmwcnfg.h \
  ../tmwscl/utils/tmwdlist.h ../tmwscl/utils/tmwtypes.h \
  ../tmwscl/utils/tmwpltmr.h ../tmwscl/utils/tmwtarg.h \
@@ -22,6 +23,12 @@ obj/linux/DNPSlave.o: DNPSlave.cpp ../tmwscl/utils/tmwdb.h \
  ../tmwscl/dnp/sdnpo032.h ../tmwscl/dnp/sdnpevnt.h \
  ../tmwscl/dnp/sdnpmem.h ../tmwscl/dnp/dnpmem.h ../tmwscl/dnp/sdnputil.h \
  ../tmwscl/tmwtarg/LinIoTarg/tmwtargio.h
+
+../mqtt_pal.h:
+
+../mqtt.h:
+
+../templates/posix_sockets.h:
 
 ../tmwscl/utils/tmwdb.h:
 

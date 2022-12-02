@@ -21,10 +21,9 @@ obj/linux/sdnpsim.o: sdnpsim.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnpxml.h ../../tmwscl/dnp/sdnpxml2.h \
  ../../tmwscl/dnp/sdnpfsim.h ../../tmwscl/dnp/sdnpmem.h \
  ../../tmwscl/dnp/dnpmem.h ../../tmwscl/dnp/sdnpo120.h \
- ../../tmwscl/dnp/sdnpauth.h ../../tmwscl/dnp/sdnpevnt.h \
- ../../tmwscl/dnp/sdnputil.h ../../tmwscl/dnp/dnpdtime.h \
- ../../tmwscl/dnp/sdnpo011.h ../../tmwscl/dnp/sdnpo042.h \
- ../../tmwscl/utils/tmwvrsn.h
+ ../../tmwscl/dnp/sdnputil.h ../../tmwscl/dnp/sdnpevnt.h \
+ ../../tmwscl/dnp/dnpdtime.h ../../tmwscl/dnp/sdnpo011.h \
+ ../../tmwscl/dnp/sdnpo042.h ../../tmwscl/utils/tmwvrsn.h
 
 ../../tmwscl/dnp/dnpdiag.h:
 
@@ -116,11 +115,9 @@ obj/linux/sdnpsim.o: sdnpsim.c ../../tmwscl/dnp/dnpdiag.h \
 
 ../../tmwscl/dnp/sdnpo120.h:
 
-../../tmwscl/dnp/sdnpauth.h:
+../../tmwscl/dnp/sdnputil.h:
 
 ../../tmwscl/dnp/sdnpevnt.h:
-
-../../tmwscl/dnp/sdnputil.h:
 
 ../../tmwscl/dnp/dnpdtime.h:
 

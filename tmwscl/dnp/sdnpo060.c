@@ -410,6 +410,7 @@ SDNPSESN_READ_STATUS TMWDEFS_GLOBAL sdnpo060_readEvents(
    * qualifier and actual number of events in each group. 
    */
   remainingPoints = pObjHeader->numberOfPoints;
+  //printf("TKV: remaining points = %d\n", remainingPoints);
 
   /* Loop through event groups */
   while(_eventGroups[i])

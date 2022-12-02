@@ -330,9 +330,9 @@ static void TMWDEFS_LOCAL _buildDb(
 
 #if SDNPDATA_SUPPORT_OBJ1 || SDNPDATA_SUPPORT_OBJ2
   for(i = 0; i < SDNPSIM_NUM_BINARY_INPUTS; i++)
-    sdnpsim_addBinaryInput(pDbHandle, TMWDEFS_CLASS_MASK_ONE, 0x01, TMWDEFS_FALSE);
+      sdnpsim_addBinaryInput(pDbHandle, TMWDEFS_CLASS_MASK_ONE, 0x01, TMWDEFS_FALSE);
+
 #endif
-  
   tmwsim_tableCreate(&pDbHandle->doubleInputs);
 
 #if SDNPDATA_SUPPORT_OBJ3 || SDNPDATA_SUPPORT_OBJ4
@@ -591,7 +591,6 @@ void * TMWDEFS_GLOBAL sdnpsim_init(
     _buildSecStatsDb(pDbHandle);
 #endif
   }
-
   return(pDbHandle);
 }
 
@@ -776,8 +775,10 @@ void * TMWDEFS_GLOBAL sdnpsim_addBinaryInput(
 {
   TMWSIM_POINT *pPoint;
   SDNPSIM_DATABASE *pDbHandle = (SDNPSIM_DATABASE *)pHandle;
+  //char buf[128];
 
   TMWTYPES_USHORT pointNum = (TMWTYPES_USHORT)tmwsim_tableSize(&pDbHandle->binaryInputs);
+  //printf("TKV: POINT NUMBER = %d:\n", pointNum); 
   pPoint = tmwsim_tableAdd(&pDbHandle->binaryInputs, pointNum);
   if(pPoint != TMWDEFS_NULL)
   {
@@ -1981,8 +1982,10 @@ void * TMWDEFS_GLOBAL sdnpsim_anlgInGetEnabledPoint(
 {
   SDNPSIM_DATABASE *pDbHandle = (SDNPSIM_DATABASE *)pHandle;
   TMWSIM_POINT *pPoint = tmwsim_tableFindPoint(&pDbHandle->analogInputs, pointNum);
+  
   if((pPoint == TMWDEFS_NULL) || !pPoint->enabled)
   {
+    //printf("TKV: RETURNING NULL FROM ENABLE POINT\n");
     return(TMWDEFS_NULL);
   }
   return(pPoint);
@@ -4063,6 +4066,8 @@ void TMWDEFS_GLOBAL sdnpsim_showData(TMWSESN *pSession)
   tmwdiag_putLine(&anlzId, "Analog Inputs:\n");
 
   quantity = sdnpsim_anlgInQuantity(pSDNPSession->pDbHandle);
+  //printf("TKV: QNTY ANALOG IN = %d", quantity);
+
   for(pointNum = 0; pointNum < quantity; pointNum++)
   {
     if((pPoint = sdnpsim_anlgInGetPoint(pSDNPSession->pDbHandle, pointNum)) != TMWDEFS_NULL)
@@ -5515,14 +5520,14 @@ static void _createDeviceAttributes(SDNPSIM_DATABASE *pDbHandle)
   data.length = (TMWTYPES_UCHAR)strlen((char *)data.value.pStrValue);
   pPoint = (TMWSIM_POINT *)sdnpsim_addDeviceAttribute(pDbHandle, 0, DNPDEFS_OBJ0_SFTW_VERSION_STR, 0, &data);
   if (pPoint != TMWDEFS_NULL)
-    tmwsim_setDescription(pPoint, "Device manufacturer’s software version string");
+    tmwsim_setDescription(pPoint, "Device manufacturer\92s software version string");
 
   data.type = DNPDEFS_ATTRIBUTE_TYPE_VSTR;
   data.value.pStrValue = (TMWTYPES_UCHAR *)"hardware version";
   data.length = (TMWTYPES_UCHAR)strlen((char *)data.value.pStrValue);
   pPoint = (TMWSIM_POINT *)sdnpsim_addDeviceAttribute(pDbHandle, 0, DNPDEFS_OBJ0_HDWR_VERSION_STR, 0, &data);
   if (pPoint != TMWDEFS_NULL)
-    tmwsim_setDescription(pPoint, "Device manufacturer’s hardware version string");
+    tmwsim_setDescription(pPoint, "Device manufacturer\92s hardware version string");
 
   /* previously called reserved */
   data.type = DNPDEFS_ATTRIBUTE_TYPE_VSTR;
@@ -5572,7 +5577,7 @@ static void _createDeviceAttributes(SDNPSIM_DATABASE *pDbHandle)
   data.length = (TMWTYPES_UCHAR)strlen((char *)data.value.pStrValue);
   pPoint = (TMWSIM_POINT *)sdnpsim_addDeviceAttribute(pDbHandle, 0, DNPDEFS_OBJ0_PRODUCT_NAME, 0, &data);
   if (pPoint != TMWDEFS_NULL)
-    tmwsim_setDescription(pPoint, "Device manufacturer’s product name and model");
+    tmwsim_setDescription(pPoint, "Device manufacturer\92s product name and model");
 
   /* DNPDEFS_OBJ0_DEVICE_CODE   Not defined in Tech Bulletin */
 
@@ -5581,7 +5586,7 @@ static void _createDeviceAttributes(SDNPSIM_DATABASE *pDbHandle)
   data.length = (TMWTYPES_UCHAR)strlen((char *)data.value.pStrValue);
   pPoint = (TMWSIM_POINT *)sdnpsim_addDeviceAttribute(pDbHandle, 0, DNPDEFS_OBJ0_DEVICE_MANU_NAME, 0, &data);
   if (pPoint != TMWDEFS_NULL)
-    tmwsim_setDescription(pPoint, "Reserved for device manufacturer’s registered DNP device code");
+    tmwsim_setDescription(pPoint, "Reserved for device manufacturer\92s registered DNP device code");
 }
 
 void * TMWDEFS_GLOBAL sdnpsim_deviceAttrGetPoint( 

@@ -330,6 +330,8 @@ void TMWDEFS_GLOBAL sdnpo004_addEvent(
   else
   {
     SDNPDIAG_ERROR(pSession->pChannel, pSession, SDNPDIAG_ADD_EVENT);
+    //printf("TKV: %s : %d", __FILE__, __LINE__);
+
   }
 
   TMWTARG_UNLOCK_SECTION(pLock);

@@ -23,8 +23,8 @@ obj/linux/sdnpevnt.o: sdnpevnt.c ../../tmwscl/dnp/dnpdiag.h \
  ../../tmwscl/dnp/sdnputil.h ../../tmwscl/dnp/sdnpunsl.h \
  ../../tmwscl/dnp/sdnpo002.h ../../tmwscl/dnp/sdnpo004.h \
  ../../tmwscl/dnp/sdnpo088.h ../../tmwscl/dnp/sdnpo115.h \
- ../../tmwscl/dnp/sdnpo120.h ../../tmwscl/dnp/sdnpauth.h \
- ../../tmwscl/dnp/dnpstat.h ../../tmwscl/dnp/dnpdtime.h
+ ../../tmwscl/dnp/sdnpo120.h ../../tmwscl/dnp/dnpstat.h \
+ ../../tmwscl/dnp/dnpdtime.h
 
 ../../tmwscl/dnp/dnpdiag.h:
 
@@ -125,8 +125,6 @@ obj/linux/sdnpevnt.o: sdnpevnt.c ../../tmwscl/dnp/dnpdiag.h \
 ../../tmwscl/dnp/sdnpo115.h:
 
 ../../tmwscl/dnp/sdnpo120.h:
-
-../../tmwscl/dnp/sdnpauth.h:
 
 ../../tmwscl/dnp/dnpstat.h:
 

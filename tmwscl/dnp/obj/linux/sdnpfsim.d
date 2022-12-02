@@ -19,8 +19,7 @@ obj/linux/sdnpfsim.o: sdnpfsim.c ../../tmwscl/utils/tmwtarg.h \
  ../../tmwscl/dnp/sdnpsesn.h ../../tmwscl/dnp/sdnpsesp.h \
  ../../tmwscl/dnp/sdnpxml.h ../../tmwscl/dnp/sdnpxml2.h \
  ../../tmwscl/dnp/sdnpsim.h ../../tmwscl/utils/tmwsim.h \
- ../../tmwscl/dnp/sdnpfsim.h ../../tmwscl/dnp/sdnptarg.h \
- ../../tmwscl/dnp/sdnpo070.h
+ ../../tmwscl/dnp/sdnpfsim.h
 
 ../../tmwscl/utils/tmwtarg.h:
 
@@ -105,7 +104,3 @@ obj/linux/sdnpfsim.o: sdnpfsim.c ../../tmwscl/utils/tmwtarg.h \
 ../../tmwscl/utils/tmwsim.h:
 
 ../../tmwscl/dnp/sdnpfsim.h:
-
-../../tmwscl/dnp/sdnptarg.h:
-
-../../tmwscl/dnp/sdnpo070.h:

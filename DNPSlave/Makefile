@@ -67,6 +67,8 @@ endif
 OBJECTS := \
 	$(OBJDIR)/DNPMultithreadSlave.o \
 	$(OBJDIR)/DNPSlave.o \
+	$(OBJDIR)/mqtt.o \
+	$(OBJDIR)/mqtt_pal.o \
 
 RESOURCES := \
 
@@ -126,7 +128,28 @@ else
 	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
 endif
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
 $(OBJDIR)/DNPSlave.o: DNPSlave.cpp
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+
+	
+$(OBJDIR)/mqtt.o: mqtt.c
+	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
+	$(SILENT) mkdir -p $(OBJDIR)
+else
+	$(SILENT) mkdir $(subst /,\\,$(OBJDIR))
+endif
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+	
+
+$(OBJDIR)/mqtt_pal.o: mqtt_pal.c
 	@echo $(notdir $<)
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) mkdir -p $(OBJDIR)

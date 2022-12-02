@@ -741,6 +741,7 @@ static void TMWDEFS_GLOBAL _sendResponse(
     || noResp)
   {
     /* No response was required, deallocate the TX Data */
+    
     dnpchnl_freeTxData(pResponse);
 
     /* Clear error IIN bits, so these don't get sent in next response */
@@ -781,7 +782,9 @@ static TMWTYPES_BOOL TMWDEFS_LOCAL _sendNullResponse(
 #endif
 
   _initializeResponse(pSession, pResponse, TMWDEFS_TRUE, TMWDEFS_TRUE);
+  
   _sendResponse(pSession, TMWDEFS_FALSE, pRequest, pResponse);
+  
 
   return(TMWDEFS_TRUE);
 }
@@ -812,6 +815,7 @@ static void TMWDEFS_LOCAL _buildReadResponse(
   {
     return;
   }
+  
   _initializeResponse(pSession, pResponse, firstFragment, TMWDEFS_FALSE);
 
   
@@ -832,6 +836,8 @@ static void TMWDEFS_LOCAL _buildReadResponse(
    * explicit static data. Finally we read static data specified by a class 0
    * data poll.
    */
+
+  //printf("TKV: 11111111111111111\n");
   do
   {
     if(pSDNPSession->readPass == 1)
@@ -1061,6 +1067,7 @@ static void TMWDEFS_LOCAL _buildReadResponse(
   }
 
   /* Send the response */
+   
   _sendResponse(pSession, TMWDEFS_FALSE, pRequest, pResponse);
 }
  
@@ -1131,6 +1138,7 @@ static void TMWDEFS_CALLBACK _processNextMessage(
 
       /* Resend last response */
       pSDNPSession->pLastResponse->sent = TMWDEFS_FALSE;
+      
       _sendResponse(pSession, TMWDEFS_FALSE, &pSDNPSession->lastRcvdRequest, (TMWSESN_TX_DATA*)pSDNPSession->pLastResponse);
 
       return;
@@ -2250,6 +2258,7 @@ static void TMWDEFS_LOCAL _processWriteRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+   
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 }
 
@@ -2323,8 +2332,9 @@ static void TMWDEFS_LOCAL _processSelectRequest(
         /* Done with this message */
         pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
-        /* Send response */
+     
         _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
+        
         return;
       }
     }
@@ -2458,7 +2468,9 @@ static void TMWDEFS_LOCAL _processSelectRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+  
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
+   
 }
 
 /* function: _processOperateRequest
@@ -2552,7 +2564,9 @@ static void TMWDEFS_LOCAL _processOperateRequest(
       pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
       /* Send response */
+     
       _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
+       
       return;
     }
 
@@ -2657,7 +2671,9 @@ static void TMWDEFS_LOCAL _processOperateRequest(
   }
 
   /* Send response */
+  
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
+    
 }
 
 /* function: _processDirectOperateRequest
@@ -2775,7 +2791,9 @@ static void TMWDEFS_LOCAL _processDirectOperateRequest(
   noResp = (TMWTYPES_BOOL)((pRxMessage->fc == DNPDEFS_FC_DIRECT_OP_NOACK) ? TMWDEFS_TRUE : TMWDEFS_FALSE);
 
   /* Send response */
+
   _sendResponse(pSession, noResp, pRxMessage, pResponse);
+ 
 }
 
 #if SDNPDATA_SUPPORT_OBJ20
@@ -2891,7 +2909,7 @@ static void TMWDEFS_LOCAL _processFreezeRequest(
 #else
   /* According to TB2002-001 Counter Objects
    * A device that does not support Frozen Counters should respond after setting the 
-   * “Function Code Not Implemented” indication. Devices that support Frozen Counters 
+   * ï¿½Function Code Not Implementedï¿½ indication. Devices that support Frozen Counters 
    * must support both Immediate Freeze and Freeze and Clear commands. 
    */
   SDNPDIAG_ERROR(pSession->pChannel, pSession, SDNPDIAG_FREEZE);
@@ -2920,6 +2938,7 @@ static void TMWDEFS_LOCAL _processFreezeRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+    
   _sendResponse(pSession, noResp, pRxMessage, pResponse);
 }
 #endif
@@ -2986,6 +3005,7 @@ static void TMWDEFS_LOCAL _processRestartRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+   
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 }
 
@@ -3078,6 +3098,7 @@ static void TMWDEFS_LOCAL _processEnableUnsolRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response to unsolicited enable request */
+   
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 
   /* Update status of unsolicited events */
@@ -3176,7 +3197,9 @@ static void TMWDEFS_LOCAL _processDisableUnsolRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
+   
 }
 
 #if SDNPDATA_SUPPORT_ASSIGN
@@ -3301,6 +3324,7 @@ static void TMWDEFS_LOCAL _processAssignClassRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+  
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 }
 #endif
@@ -3354,6 +3378,7 @@ static void TMWDEFS_LOCAL _processRecordTimeRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+   
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 }
 
@@ -3410,6 +3435,7 @@ static void TMWDEFS_LOCAL _processDelayRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+ 
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 }
 #endif
@@ -3489,6 +3515,7 @@ static void TMWDEFS_LOCAL _processFileRequest(
   pSDNPSession->pendingRequest = TMWDEFS_FALSE;
 
   /* Send response */
+  
   _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
 }
 #endif
@@ -3618,6 +3645,7 @@ static void TMWDEFS_LOCAL _processActConfigRequest(
             length = pResponse->msgLength - lengthOrDelayIndex -2;
             tmwtarg_store16(&length, pResponse->pMsgBuf + lengthOrDelayIndex);
           }
+       
           _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
           return;
         }
@@ -3677,6 +3705,7 @@ static void TMWDEFS_LOCAL _processActConfigRequest(
             length = pResponse->msgLength - lengthOrDelayIndex -2;
             tmwtarg_store16(&length, pResponse->pMsgBuf + lengthOrDelayIndex);
           } 
+         
           _sendResponse(pSession, TMWDEFS_FALSE, pRxMessage, pResponse);
           return;
         }
